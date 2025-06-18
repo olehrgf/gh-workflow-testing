@@ -1,0 +1,62 @@
+name: On merge Release PR
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    paths-ignore:
+      - .github/workflows/*
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'release') &&
+      startsWith(github.event.pull_request.head.ref, 'release-')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check current version
+        id: current-version
+        shell: bash
+        run: |
+          echo "Checking current version..."
+
+#      - name: Create GitHub Release
+#        id: release
+#        shell: bash
+#        env:
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          git config --local user.email "actions@github.com"
+#          git config --local user.name "GitHub Actions"
+#
+#          poetry version ${{ inputs.version-increment }}
+#          export RELEASE_VERSION=$(poetry version --short)
+#
+#          git tag -a "v${RELEASE_VERSION}" -m "Release version ${RELEASE_VERSION}"
+#          git push origin "v${RELEASE_VERSION}"
+#
+#          gh create release "${GITHUB_REF_NAME}" --title "Release ${GITHUB_REF_NAME}" --target "${GITHUB_REF}" --generate-notes
+#
+#      - name: Increment DEV version
+#        shell: bash
+#        run: |
+#          poetry version ${{ inputs.dev-version-increment }}
+#          export DEV_VERSION=$(poetry version --short)
+#          echo "Incrementing DEV version to ${DEV_VERSION}"
+#
+#          DEV_VERSION_BRANCH="dev-${DEV_VERSION}"
+#          git checkout -b "${DEV_VERSION_BRANCH}"
+#          git commit -a -m "[CI] Increment new DEV version to ${DEV_VERSION}"
+#          git push origin "${DEV_VERSION_BRANCH}"
+#
+#          echo "Creating GitHub post-release Pull Request..."
+#          gh pr create --base main --head "${DEV_VERSION_BRANCH}" --title "Post Release ${DEV_VERSION}" --body "Increment dev version to ${DEV_VERSION}"
