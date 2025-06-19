@@ -45,7 +45,7 @@ jobs:
           elif [[ "${{ github.event_name }}" == "release" && "${{ github.event.release.draft }}" == "true" ]]; then
             # Release event. Set the increment value to 'prepatch' by default
             echo "VERSION_INCREMENT=prepatch" >> $GITHUB_ENV
-            echo "RELEASE_BRANCH=main >> $GITHUB_ENV
+            echo "RELEASE_BRANCH=main" >> $GITHUB_ENV
           else
             echo "VERSION_INCREMENT=prepatch" >> $GITHUB_ENV
             echo "RELEASE_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
