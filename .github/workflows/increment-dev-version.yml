@@ -1,0 +1,67 @@
+name: Increment Dev Version
+
+on:
+  release:
+    types: [created, published]
+  workflow_dispatch:
+    inputs:
+      version-increment:
+        description: 'Semantic release version level for DEV (e.g., major, minor, patch).'
+        required: false
+        default: patch
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  increment-dev-version:
+    name: Increment DEV Version
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && github.event.release.draft == false)
+    steps:
+      - name: Setup env
+        id: setup-env
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # Workflow dispatch event. Set the increment value from input
+            echo "VERSION_INCREMENT=${{ github.event.inputs.version-increment }}" >> $GITHUB_ENV
+            echo "RELEASE_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
+          elif [[ "${{ github.event_name }}" == "release" && ${{ github.event.release.draft }} ]]; then
+            # Release event. Set the increment value to 'prepatch' by default
+            echo "VERSION_INCREMENT=prepatch" >> $GITHUB_ENV
+            echo "RELEASE_BRANCH=main >> $GITHUB_ENV
+          else
+            echo "VERSION_INCREMENT=prepatch" >> $GITHUB_ENV
+            echo "RELEASE_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_BRANCH }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Increment DEV version
+        shell: bash
+        run: |
+          echo "Incrementing DEV version..."

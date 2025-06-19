@@ -1,0 +1,34 @@
+name: Publish Artifact
+
+on:
+  release:
+    types: [created, published]
+
+permissions:
+  id-token: write
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  poetry-publish:
+    name: Publish Artifact
+    if: github.event.release.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Publish Artifact
+        shell: bash
+        run: |
+          echo "Publishing artifact for release ${GITHUB_REF_NAME}"
