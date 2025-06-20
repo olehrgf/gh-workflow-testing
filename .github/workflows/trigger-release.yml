@@ -17,6 +17,11 @@ on:
           - prepatch
           - prerelease
 
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
 jobs:
   trigger-release:
     name: Trigger Release
@@ -43,6 +48,8 @@ jobs:
           ref: main
 
       - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           echo "Create release PR with version increment: $VERSION_INCREMENT"
@@ -57,6 +64,8 @@ jobs:
           gh release create "v${NEW_VERSION}" --title "Release ${NEW_VERSION}" --target "${{ env.RELEASE_BRANCH }}" --generate-notes
 
       - name: Increment DEV version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           echo "Incrementing DEV version..."
