@@ -1,0 +1,67 @@
+name: Trigger Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version-increment:
+        description: 'Semantic release version level for DEV (e.g., major, minor, patch).'
+        required: false
+        default: patch
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
+
+jobs:
+  trigger-release:
+    name: Trigger Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup env
+        id: setup-env
+        shell: bash
+        run: |
+          echo "VERSION_INCREMENT=${{ inputs.version-increment }}" >> $GITHUB_ENV
+          echo "RELEASE_BRANCH=main" >> $GITHUB_ENV
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Create Release
+        shell: bash
+        run: |
+          echo "Create release PR with version increment: $VERSION_INCREMENT"
+          VERSION=$(poetry version --short)
+          echo "Current version: $VERSION"
+          poetry version $VERSION_INCREMENT
+          NEW_VERSION=$(poetry version --short)
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git commit -am "Release version ${NEW_VERSION}"
+          git push origin "${{ env.RELEASE_BRANCH }}"
+          gh release create "v${NEW_VERSION}" --title "Release ${NEW_VERSION}" --target "${{ env.RELEASE_BRANCH }}" --generate-notes
+
+      - name: Increment DEV version
+        shell: bash
+        run: |
+          echo "Incrementing DEV version..."
+          poetry version prepatch
+          DEV_VERSION=$(poetry version --short)
+          echo "New DEV version: ${DEV_VERSION}"
+          git commit -am "[CI] Increment new DEV version to ${DEV_VERSION}"
+          git push origin "${{ env.RELEASE_BRANCH }}"

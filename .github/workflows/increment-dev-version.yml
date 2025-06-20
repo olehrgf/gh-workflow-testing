@@ -40,15 +40,15 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             # Workflow dispatch event. Set the increment value from input
-            echo "VERSION_INCREMENT=${{ github.event.inputs.version-increment }}" >> $GITHUB_ENV
-            echo "RELEASE_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
+            echo "VERSION_INCREMENT=${{ inputs.version-increment }}" >> $GITHUB_ENV
+            echo "RELEASE_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
           elif [[ "${{ github.event_name }}" == "release" && "${{ github.event.release.draft }}" == "true" ]]; then
             # Release event. Set the increment value to 'prepatch' by default
             echo "VERSION_INCREMENT=prepatch" >> $GITHUB_ENV
             echo "RELEASE_BRANCH=main" >> $GITHUB_ENV
           else
             echo "VERSION_INCREMENT=prepatch" >> $GITHUB_ENV
-            echo "RELEASE_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
+            echo "RELEASE_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
           fi
 
       - name: Checkout repository

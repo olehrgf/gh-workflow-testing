@@ -1,0 +1,54 @@
+[project]
+name = "sample-app"
+description = "Sample application for demonstrating Poetry usage"
+authors = [
+    { name = "Oleh Rohov", email = "olehrgf@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.11"
+
+dynamic = ["version", "dependencies"]
+
+[project.urls]
+repository = "https://github.com/olehrgf/gh-workflow-testing"
+
+[tool.poetry]
+version = "0.0.0a0"
+packages = [
+    { include = "bqp", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+
+[tool.poetry.group.lint.dependencies]
+flake8 = "^6.1.0"
+flake8-pyproject = '^1.2.3'
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+coverage = "^7.3.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "3.7.0"
+
+[tool.flake8]
+ignore = ['E501', 'E203', 'W503']
+max-complexity = 15
+max-line-length = 250
+application-import-names = ['gcpcommon', 'tests', 'tools']
+exclude = [
+    'venv',
+    '.venv',
+    '.git',
+    '.cicd',
+]
+
+[tool.coverage.paths]
+source = ['src/app']
+
+[tool.coverage.run]
+branch = true
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
