@@ -13,7 +13,7 @@ dynamic = ["version", "dependencies"]
 repository = "https://github.com/olehrgf/gh-workflow-testing"
 
 [tool.poetry]
-version = "0.0.0"
+version = "0.0.1"
 packages = [
     { include = "bqp", from = "src" }
 ]
