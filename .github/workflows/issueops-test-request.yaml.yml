@@ -43,6 +43,10 @@ jobs:
       issues: write
 
     steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
       - name: Parse Issue
         id: parse
         uses: issue-ops/parser@v4.1.0
