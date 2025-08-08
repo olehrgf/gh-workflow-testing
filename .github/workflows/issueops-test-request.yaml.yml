@@ -1,0 +1,32 @@
+name: issueops-test-request.yaml
+on:
+  issues:
+    types:
+     - opened
+
+jobs:
+  handle-test-request:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'test-request')
+    permissions:
+      contents: read
+      issues: read
+
+    steps:
+      # Get the repository contents. This lets the workflow reference files in
+      # the repository such as the issue form template.
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Parse Issue
+        id: parse
+        uses: issue-ops/parser@v4.1.0
+        with:
+          body: ${{ github.event.issue.body }}
+          issue-form-template: test-request.yaml
+
+      - name: Output the Parsed Issue
+        id: output
+        run: |
+          echo ${{ steps.parse.outputs.json }} >> $GITHUB_STEP_SUMMARY
