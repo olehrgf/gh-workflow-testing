@@ -52,15 +52,16 @@ jobs:
         uses: issue-ops/parser@v4.1.0
         with:
           body: ${{ github.event.issue.body }}
-
           issue-form-template: test-request.yaml
+
       - name: Comment on Issue
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
-            const issue = context.issue;
-            const body = "Test request received. The team will review it shortly.";
+            json = '${{ steps.parse.outputs.json }}'
             await github.rest.issues.createComment({
-              ...issue,
-              steps.parse.outputs.json
-            });
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 Thanks for reporting!\n' + steps.parse.outputs.json
+            })
