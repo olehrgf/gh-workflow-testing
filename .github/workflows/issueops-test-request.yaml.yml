@@ -3,9 +3,12 @@ on:
   issues:
     types:
      - opened
+  issue_comment:
+    types:
+     - created
 
 jobs:
-  handle-test-request:
+  handle-test-request-issue:
     runs-on: ubuntu-latest
     if: contains(github.event.issue.labels.*.name, 'test-request')
     permissions:
@@ -30,3 +33,30 @@ jobs:
         id: output
         run: |
           echo ${{ steps.parse.outputs.json }} >> $GITHUB_STEP_SUMMARY
+
+  handle-test-request-comment:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'test-request') && startsWith(github.event.comment.body, '/test')
+    needs: handle-test-request-issue
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Parse Issue
+        id: parse
+        uses: issue-ops/parser@v4.1.0
+        with:
+          body: ${{ github.event.issue.body }}
+
+          issue-form-template: test-request.yaml
+      - name: Comment on Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.issue;
+            const body = "Test request received. The team will review it shortly.";
+            await github.rest.issues.createComment({
+              ...issue,
+              steps.parse.outputs.json
+            });
