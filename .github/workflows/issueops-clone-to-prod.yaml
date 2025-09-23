@@ -1,0 +1,28 @@
+name: issueops-prod-update.yaml
+on:
+  issues:
+    types:
+      - opened
+      - reopened
+permissions:
+  id-token: write
+  issues: write
+  pull-requests: write
+  contents: write
+jobs:
+  convert-issue-to-pr:
+    if: contains(github.event.issue.labels.*.name, 'issueops:prod-update') && github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RELEASE_BRANCH: main
+    steps:
+      - name: Parse Issue
+        id: parser
+        uses: issue-ops/parser@v4
+        with:
+          body: ${{ github.event.issue.body }}
+      - name: Print parsed values
+        shell: bash
+        run: |
+          echo ${{ steps.parser.outputs.json }}

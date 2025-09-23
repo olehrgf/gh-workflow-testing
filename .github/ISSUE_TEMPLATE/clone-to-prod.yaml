@@ -1,0 +1,35 @@
+name: Clone to Production
+description: |
+  Use this template to request a production update. 
+  This will create an issue that will be converted to a Pull Request for deploying changes to production.
+title: "[prod]: "
+labels: ["issueops:clone-to-prod"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting a production update request! Please fill out the details below to help us process your request efficiently.
+        This issue will be automatically converted to the Pull Request that will be used to deploy your changes to production.
+        Make sure to link the preapproved Change Request number below.
+  - type: input
+    id: change-request-number
+    attributes:
+      label: Preapproved Change Request Number
+      description: Please provide the preapproved Change Request number associated with this production update.
+      placeholder: CHGXXXXXXXXXX
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Resources to clone
+      description: |
+        The line separated list of of the FQDNs of the resources you want to clone to production.
+        Example:
+        ```
+        <dataset_id_1>.<resource_id_1>
+        <dataset_id_2>.<resource_id_2>
+        ```
+      placeholder: dataset_id.resource_id
+    validations:
+      required: true
