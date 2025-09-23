@@ -34,6 +34,7 @@ jobs:
           git push origin --delete "$RELEASE_BRANCH" || true
           
           git checkout -b "prod/feature/$ISSUE_NUMBER" "origin/$RELEASE_BRANCH"
+          git commit --allow-empty -m "Convert issue #$ISSUE_NUMBER to PR"
           git push origin "prod/feature/$ISSUE_NUMBER"
           
           gh api repos/{owner}/{repo}/pulls \
