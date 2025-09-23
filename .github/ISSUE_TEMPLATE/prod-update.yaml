@@ -13,7 +13,7 @@ body:
         This issue will be automatically converted to the Pull Request that will be used to deploy your changes to production.
         Make sure to link the preapproved Change Request number below.
   - type: input
-    id: Change Request Number
+    id: change-request-number
     attributes:
       label: Preapproved Change Request Number
       description: Please provide the preapproved Change Request number associated with this production update.
