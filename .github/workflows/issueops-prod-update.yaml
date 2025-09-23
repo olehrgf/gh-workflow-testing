@@ -36,7 +36,6 @@ jobs:
           git checkout -b "prod/feature/$ISSUE_NUMBER" "origin/$RELEASE_BRANCH"
           git push origin "prod/feature/$ISSUE_NUMBER"
           
-          echo "This is a placeholder commit for issue #$ISSUE_NUMBER" > README.md
           gh api repos/{owner}/{repo}/pulls \
             -f "head=prod/feature/$ISSUE_NUMBER" \
             -f "base=$RELEASE_BRANCH" \
