@@ -1,4 +1,4 @@
-name: issueops-prod-update.yaml
+name: issueops-clone-to-prod.yaml
 on:
   issues:
     types:
