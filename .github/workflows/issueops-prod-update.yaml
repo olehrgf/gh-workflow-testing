@@ -8,7 +8,7 @@ permissions:
   id-token: write
   issues: write
   pull-requests: write
-#  contents: write
+  contents: write
 jobs:
   convert-issue-to-pr:
     if: contains(github.event.issue.labels.*.name, 'issueops:prod-update') && github.event.issue.pull_request == null
