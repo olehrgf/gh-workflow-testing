@@ -3,6 +3,7 @@ on:
   issues:
     types:
       - opened
+      - reopened
 permissions:
   id-token: write
   issues: write
@@ -16,8 +17,11 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       RELEASE_BRANCH: main
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          ref: ${{ env.RELEASE_BRANCH }}
+          fetch-depth: 0 # Full history is needed to create new branches
       - name: Convert Issue to Pull Request
         shell: bash
         run: |
@@ -27,6 +31,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
+          git pull -D origin "$RELEASE_BRANCH" || true
           git checkout -b "prod/feature/$ISSUE_NUMBER" "origin/$RELEASE_BRANCH"
           git push origin "prod/feature/$ISSUE_NUMBER"
           
