@@ -2,9 +2,9 @@ name: Test Request
 description: Test request.
 title: "[test-request]: "
 labels: ["test-request"]
-projects: ["olehrgf/gh-workflow-testing"]
-assignees:
-  - olehrgf
+#projects: ["org/repo"]
+#assignees:
+#  - some_user
 body:
   - type: markdown
     attributes:
