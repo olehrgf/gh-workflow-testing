@@ -1,0 +1,22 @@
+name: Prod Update
+description: Prod update.
+title: "[prod]: "
+labels: ["issueops:prod-update"]
+#projects: ["org/repo"]
+#assignees:
+#  - some_user
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting a production update request! Please fill out the details below to help us process your request efficiently.
+        This issue will be automatically converted to the Pull Request that will be used to deploy your changes to production.
+        Make sure to link the preapproved Change Request number below.
+  - type: input
+    id: Change Request Number
+    attributes:
+      label: Preapproved Change Request Number
+      description: Please provide the preapproved Change Request number associated with this production update.
+      placeholder: CHGXXXXXXXXXX
+    validations:
+      required: true

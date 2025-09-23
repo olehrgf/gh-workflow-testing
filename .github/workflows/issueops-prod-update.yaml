@@ -1,0 +1,38 @@
+name: issueops-prod-update.yaml
+on:
+  issues:
+    types:
+      - opened
+permissions:
+  id-token: write
+  issues: write
+  pull-requests: write
+#  contents: write
+jobs:
+  convert-issue-to-pr:
+    if: contains(github.event.issue.labels.*.name, 'issueops:prod-update') && github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RELEASE_BRANCH: main
+    steps:
+      - name: Convert Issue to Pull Request
+        shell: bash
+        run: |
+          echo "Converting issue #${{ github.event.issue.number }} to a Pull Request..."
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          gh api repos/{owner}/{repo}/pulls \
+            -f "head=prod/feature/$ISSUE_NUMBER" \
+            -f "base=$RELEASE_BRANCH" \
+            -F "issue=$ISSUE_NUMBER"
+          
+
+      - name: Assign owner to PR
+        if: success()
+        shell: bash
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          PR_NUMBER=$(gh api repos/{owner}/{repo}/pulls --jq ".[] | select(.head.ref == \"prod/feature/$ISSUE_NUMBER\") | .number")
+          echo "Assigning issue owner to PR #$PR_NUMBER..."
+          ISSUE_OWNER="${{ github.event.issue.user.login }}"
+          gh api repos/{owner}/{repo}/issues/$PR_NUMBER/assignees -f assignees="$ISSUE_OWNER"
