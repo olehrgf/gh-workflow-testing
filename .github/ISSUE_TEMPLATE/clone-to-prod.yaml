@@ -14,8 +14,8 @@ body:
   - type: input
     id: change-request-number
     attributes:
-      label: Preapproved Change Request Number
-      description: Please provide the preapproved Change Request number associated with this production update.
+      label: Pre-approved Change Request Number
+      description: Please provide the pre-approved Change Request number associated with this production update.
       placeholder: CHGXXXXXXXXXX
     validations:
       required: true

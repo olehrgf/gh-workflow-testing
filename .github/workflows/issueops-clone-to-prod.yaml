@@ -26,3 +26,8 @@ jobs:
         shell: bash
         run: |
           echo ${{ steps.parser.outputs.json }}
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.RELEASE_BRANCH }}
+          fetch-depth: 0
